@@ -8,6 +8,7 @@ using WebApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Queue;
+using WebApi.Entities;
 
 namespace WebApi.Controllers
 {
@@ -16,45 +17,36 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class BookAuthorController : ControllerBase
     {
-        private readonly IBookService _bookService;
-        private readonly IBackgroundTaskQueue<BookDto> _queue;
-        public BookAuthorController(IBookService bookService, IBackgroundTaskQueue<BookDto> queue)
+        private readonly IBookAuthorService _bookAuthorService;
+
+        public BookAuthorController(IBookAuthorService bookAuthorService, IBackgroundTaskQueue<BookDto> queue)
         {
-            _bookService = bookService;
-            _queue = queue;
+            _bookAuthorService = bookAuthorService;
         }
 
-        [HttpGet("GetAll")]
-        public async Task<ActionResult<ServiceResponse<List<BookDto>>>> Get(){
-            return Ok(await _bookService.GetAllBooks());
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<List<BookAuthor>>>> GetAingleBook(){
+            return Ok(await _bookAuthorService.GetAllBookAuthors());
         }
+
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<BookDto>>> GetSingle(int id){
-            return Ok(await _bookService.GetBookById(id));
+        public async Task<ActionResult<ServiceResponse<BookAuthor>>> GetSingleBook(int id){
+            return Ok(await _bookAuthorService.GetBookAuthorById(id));
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<List<BookDto>>>> AddBook(BookDto newBook)
+        public async Task<ActionResult<ServiceResponse<List<BookAuthor>>>> AddBook(BookAuthor newBookAuthor)
         {
-            return Ok(await _bookService.AddNewBook(newBook));
+            return Ok(await _bookAuthorService.AddNewBookAuthor(newBookAuthor));
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceResponse<List<BookDto>>>> UpdateBook(UpdateBook updateBook)
+        public async Task<ActionResult<ServiceResponse<List<BookAuthor>>>> UpdateBook(BookAuthor updateBookAuthor)
         {
-            return Ok(await _bookService.UpdateBook(updateBook));
+            return Ok(await _bookAuthorService.UpdateBookAuthor(updateBookAuthor));
         }
 
-        [HttpPost("queue")]
-        public async Task<IActionResult> saveBook([FromBody] List<BookDto> books)
-        {
-            for(int i = 0; i < books.Capacity; i++){
-                _queue.Enqueue(books[i]);
-            }
-            
-            return Accepted();
-        }
         
     }
 }

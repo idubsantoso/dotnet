@@ -73,7 +73,7 @@ public class UserService : IUserService
     public async Task<ServiceResponse<List<UserDto>>> GetAll()
     {
         var serviceResponse = new ServiceResponse<List<UserDto>>();
-        var dbUser = await _context.Books.ToListAsync();
+        var dbUser = await _context.Users.ToListAsync();
         serviceResponse.Data = dbUser.Select(c => _mapper.Map<UserDto>(c)).ToList();
         return serviceResponse;
     }

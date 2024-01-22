@@ -37,10 +37,9 @@ public class UsersController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet]
-    public IActionResult GetAll()
+    [HttpGet("getAll")]
+    public async Task<ActionResult<ServiceResponse<List<UserDto>>>> GetAll()
     {
-        var users = _userService.GetAll();
-        return Ok(users);
+        return Ok(await _userService.GetAll());
     }
 }

@@ -5,20 +5,20 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebApi.Entities
 {
-    public class Book
+    public class BookAuthor
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public string? Category { get; set; }
-        public int? TotalPages { get; set; }
 
-        public ICollection<BookAuthor>? BookAuthors { get; set; } =new HashSet<BookAuthor>();
+        public int BookId { get; set; }
+        public int AuthorId { get; set; }
+        public Book? Book { get; set; }
+        public Author? Author { get; set; }
 
     }
 }

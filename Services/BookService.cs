@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
@@ -17,7 +14,7 @@ namespace WebApi.Services
         private readonly IMapper _mapper;
         private readonly DataContext _context;
 
-        public BookService(IMapper mapper, DataContext context)
+        public BookService(IMapper mapper, DataContext context, IAuthorService authorService)
         {
             _mapper = mapper;
             _context = context;
@@ -31,19 +28,47 @@ namespace WebApi.Services
             // var book = _mapper.Map<Book>(dto);
             var newBook = new Book()
             {
-                Author = dto.Author,
                 Description = dto.Description,
                 Title = dto.Title,
                 Category = dto.Category,
                 TotalPages = dto.TotalPages.HasValue ? dto.TotalPages.Value : 0,
             };
-            var dbBook = await _context.Books.AddAsync(newBook);
+            await _context.Books.AddAsync(newBook);
             await _context.SaveChangesAsync();
             serviceResponse.Data = dto;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<BookDto>> UpdateBook(UpdateBook updateBook)
+        public async Task<ServiceResponse<BookDto>> AddNewBookWithAuthor(BookDto dto)
+        {
+            var serviceResponse = new ServiceResponse<BookDto>();
+
+            // var book = _mapper.Map<Book>(dto);
+            var newBook = new Book()
+            {
+                Description = dto.Description,
+                Title = dto.Title,
+                Category = dto.Category,
+                TotalPages = dto.TotalPages.HasValue ? dto.TotalPages.Value : 0,
+            };
+            await _context.Books.AddAsync(newBook);
+            await _context.SaveChangesAsync();
+            if(dto.AuthorIds != null){
+                foreach(var id in dto.AuthorIds){
+                    var newBookAuthor = new BookAuthor()
+                    {
+                        BookId = newBook.Id,
+                        AuthorId = id,
+                    };
+                    await _context.BookAuthors.AddAsync(newBookAuthor);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            serviceResponse.Data = dto;
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<BookDto>> UpdateBook(BookDto updateBook)
         {
             var serviceResponse = new ServiceResponse<BookDto>();
 
@@ -55,7 +80,6 @@ namespace WebApi.Services
                 
                 // _mapper.Map(updateCharacter, character);
 
-                dbBook.Author = updateBook.Author;
                 dbBook.Description = updateBook.Description;
                 dbBook.Title = updateBook.Title;
                 dbBook.Category = updateBook.Category;
@@ -73,11 +97,11 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<ServiceResponse<List<BookDto>>> GetAllBooks()
+        public ServiceResponse<List<Book>> GetAllBooks()
         {
-            var serviceResponse = new ServiceResponse<List<BookDto>>();
-            var dbBook = await _context.Books.ToListAsync();
-            serviceResponse.Data = dbBook.Select(c => _mapper.Map<BookDto>(c)).ToList();
+            var serviceResponse = new ServiceResponse<List<Book>>();
+            var dbBook = _context.Books.Include(x => x.BookAuthors).ToList();
+            serviceResponse.Data = dbBook;
             return serviceResponse;
         }
 
@@ -87,6 +111,20 @@ namespace WebApi.Services
             var dbBook = await _context.Books.FirstOrDefaultAsync(c => c.Id == id);
             serviceResponse.Data = _mapper.Map<BookDto>(dbBook);
             return serviceResponse;
+        }
+
+        public BookWithAuthorsDto GetBookWithAuthorById(int bookId)
+        {
+            var serviceResponse = new ServiceResponse<BookDto>();
+            var bookWithAuthor = _context.Books.Where(n => n.Id == bookId).Select(book => new BookWithAuthorsDto(){
+                Id = book.Id,
+                Title = book.Title,
+                Description = book.Description,
+                Category = book.Category,
+                TotalPages = book.TotalPages,
+                AuthorNames = book.BookAuthors.Select(x => x.Author.Name).ToList(),
+            }).FirstOrDefault();
+            return bookWithAuthor;
         }
     }
 }

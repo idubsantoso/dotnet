@@ -15,6 +15,9 @@ namespace dotnet_rpg
             CreateMap<Book, BookDto>();
             CreateMap<BookDto, Book>();
             CreateMap<UserDto, User>();
+            CreateMap<User, UserDto>();
+            CreateMap<Author, AuthorDto>();
+            CreateMap<AuthorDto, Author>();
         }
     }
 }

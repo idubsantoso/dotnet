@@ -24,6 +24,9 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IJwtUtils, JwtUtils>();
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IBookService, BookService>();
+    services.AddScoped<IAuthorService, AuthorService>();
+    services.AddScoped<IBookAuthorService, BookAuthorService>();
+    services.AddResponseCaching();
     services.AddHttpClient();
 
     services

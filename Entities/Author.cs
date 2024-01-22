@@ -8,17 +8,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi.Entities
 {
-    public class Book
+    public class Author
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? Title { get; set; }
-        public string? Description { get; set; }
-        public string? Category { get; set; }
-        public int? TotalPages { get; set; }
+        public string? Name { get; set; }
+        public string? Address { get; set; }
+        public string? NumberId { get; set; }
 
-        public ICollection<BookAuthor>? BookAuthors { get; set; } =new HashSet<BookAuthor>();
+        public List<BookAuthor>? BookAuthors { get; set; }
+
 
     }
 }
