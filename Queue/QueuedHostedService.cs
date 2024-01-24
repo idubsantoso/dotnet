@@ -44,6 +44,7 @@ namespace WebApi.Queue
             {
                 try
                 {
+                    //testing
                     await Task.Delay(500, stoppingToken);
                     var book = _queue.Dequeue();
 
