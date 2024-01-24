@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using WebApi.Authorization;
 using WebApi.Data;
 using WebApi.Dto;
@@ -26,6 +27,8 @@ var builder = WebApplication.CreateBuilder(args);
     services.AddScoped<IBookService, BookService>();
     services.AddScoped<IAuthorService, AuthorService>();
     services.AddScoped<IBookAuthorService, BookAuthorService>();
+    services.AddScoped<ICinemaService, CinemaService>();
+    services.AddScoped<IMovieService, MovieService>();
     services.AddResponseCaching();
     services.AddHttpClient();
 
