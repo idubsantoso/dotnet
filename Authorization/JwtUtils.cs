@@ -28,6 +28,7 @@ public class JwtUtils : IJwtUtils
 
     public string GenerateJwtToken(User user)
     {
+        //testing
         // generate token that is valid for 7 days
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_appSettings.Secret!);

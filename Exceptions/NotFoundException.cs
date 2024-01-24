@@ -8,6 +8,7 @@ namespace WebApi.Exceptions
 {
     public class NotFoundException : CustomException
     {
+        //testing
         public NotFoundException(string message)
             : base(message, null, HttpStatusCode.NotFound)
         {

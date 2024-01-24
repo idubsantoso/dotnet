@@ -19,6 +19,7 @@ public class AuthorizeAttribute : Attribute, IAuthorizationFilter
         if (user == null)
         {
             // not logged in or role not authorized
+            //testing
             context.Result = new JsonResult(new { message = "Unauthorized" }) { StatusCode = StatusCodes.Status401Unauthorized };
         }
     }

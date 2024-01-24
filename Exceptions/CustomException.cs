@@ -8,6 +8,7 @@ namespace WebApi.Exceptions
 {
     public class CustomException : Exception
     {
+        //testing
         public List<string>? ErrorMessages { get; }
 
         public HttpStatusCode StatusCode { get; }
